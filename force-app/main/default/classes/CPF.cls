@@ -47,17 +47,12 @@ public with sharing class CPF {
     }
 
     private static Boolean compareCalculatedWithGiven(String cpf, Integer digit1, Integer digit2) {
-        System.debug(digit1);
-        System.debug(digit2);
         Integer calculatedCheckDigit = 10*digit1+digit2;
-        System.debug(calculatedCheckDigit);
-        System.debug(getCheckDigit(cpf));
         return calculatedCheckDigit == Integer.valueOf(getCheckDigit(cpf));
     }
 
     public static Boolean validate(String cpf) {
         cpf = extractDigits(cpf);
-        System.debug(cpf);
         if (isInvalidLength(cpf)) {
             return false;
         }    
