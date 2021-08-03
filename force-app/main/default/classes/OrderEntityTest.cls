@@ -20,18 +20,31 @@ public class OrderEntityTest {
         insert wrongDataContact;
 
         
-        Coupon__c exampleCoupon = new Coupon__c(Name = 'TEST_COUPON', DiscountPercentage__c = 0.2);\
+        Coupon__c exampleCoupon = new Coupon__c(Name = 'TEST_COUPON', DiscountPercentage__c = 0.2);
         insert exampleCoupon;
 
     }
 
     @isTest
-    static void testNormalAccount() {
+    static void testInvalidCPF() {
 
-        String orderItems = '{[{"description" : "test", "price": 1.0, "quantity" : 1.0, "product" : "A"},{"description" : "test", "price": 1.0, "quantity" : 1.0, "product" : "A"},{"description" : "test", "price": 1.0, "quantity" : 1.0, "product" : "A"}]}';
+        String cpf = '111.111.111-11';
 
-        System.assertEquals(True,OrderController.createOrder('864.464.227-84','TEST_COUPON',orderItems),'Failed to created a normal order');
+        try {
+            OrderEntity newOrder = new OrderEntity(cpf);
+        } catch(Exception e) { 
+            System.assertEquals(true,e.getMessage().contains('Invalid CPF'),'Failed to validate order creation with invalid cpf.');
+        }
+    
+    }
 
+    @isTest
+    static void testValidCPF() {
+
+        String cpf = '864.464.227-84';
+
+        OrderEntity newOrder = new OrderEntity(cpf);
+    
     }
 
 }

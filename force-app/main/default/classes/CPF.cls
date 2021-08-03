@@ -1,9 +1,20 @@
-public with sharing class ValidadeCPF {
+public with sharing class CPF {
+
+
+    public virtual class BaseException extends Exception {}
+    public class OtherException extends BaseException {}
 
     private static final Integer FACTOR_DIGIT_1 = 10;
     private static final Integer FACTOR_DIGIT_2 = 11;
     private static final Integer MAX_DIGITS_1 = 9;
     private static final Integer MAX_DIGITS_2 = 10;
+    
+    public static String value;
+
+    public CPF(String cpf) {
+        if(!validate(cpf)) throw new OtherException('Invalid CPF');
+        value = cpf;
+    }
 
     private static String extractDigits(String cpf) {
         return cpf.replaceAll('[^0-9]', '');

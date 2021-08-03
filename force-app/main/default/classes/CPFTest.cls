@@ -1,5 +1,5 @@
 @isTest
-public with sharing class ValidateCPFTest {
+public with sharing class CPFTest {
 
     @isTest
     public static void commonCpf() {
