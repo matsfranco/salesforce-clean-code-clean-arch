@@ -20,4 +20,8 @@ public with sharing class CouponEntity {
         return coupons[0];
     }
 
+    public Boolean isExpired() {
+        return this.expirationDate < Datetime.now();
+    }
+
 }
