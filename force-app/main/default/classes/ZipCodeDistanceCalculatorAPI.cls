@@ -1,6 +1,4 @@
 
-public with sharing class ZipCodeDistanceCalculatorAPI {
-    public ZipCodeDistanceCalculatorAPI() {
-
-    }
+public interface ZipCodeDistanceCalculatorAPI {
+    Decimal calculate(String destiation, String origin);
 }
