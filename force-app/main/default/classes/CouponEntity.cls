@@ -1,27 +1,20 @@
 public with sharing class CouponEntity {
     
-    private String couponCode;
+    private String code;
     public Decimal discountPercentage;
     private Datetime expirationDate;
     
     public virtual class CouponEntityException extends Exception {}
 
-    public CouponEntity(String code) {
-        this.couponCode = code;
-        Coupon__c coupon = getCouponByCode(code);
-        if(this.discountPercentage > 1 || this.discountPercentage <= 0) throw new CouponEntityException('Invalid coupon percentage!');
-        this.discountPercentage = coupon.DiscountPercentage__c;
-        this.expirationDate = coupon.ExpirationDate__c;
-    }
-
-    public Coupon__c getCouponByCode(String code) {
-        List<Coupon__c> coupons = [SELECT Id,DiscountPercentage__c,ExpirationDate__c FROM Coupon__c WHERE Name =: code AND ExpirationDate__c >=: System.now()];
-        if(coupons.isEmpty() || coupons.size() > 1) throw new CouponEntityException('Invalid Coupon!');
-        return coupons[0];
+    public CouponEntity(String code, Decimal percentage, Date expirationDate) {
+        this.code = code;
+        this.discountPercentage = discountPercentage;
+        this.expirationDate = expirationDate;
     }
 
     public Boolean isExpired() {
-        return this.expirationDate < Datetime.now();
+        Date today = Date.Today();
+        return this.expirationDate < today;
     }
 
 }
