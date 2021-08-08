@@ -1,9 +1,9 @@
 public with sharing class PlaceOrderInput {
     
-    String cpf;
-    String zipcode;
-    List<OrderItemEntity> items;
-    String coupon;
+    public String cpf;
+    public String zipcode;
+    public List<OrderItemEntity> items;
+    public String coupon;
     
     public PlaceOrderInput(String cpf, String zipCode, List<OrderItemEntity> items, String coupon) {
         this.cpf = cpf;

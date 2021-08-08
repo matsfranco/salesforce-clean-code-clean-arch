@@ -1,8 +1,8 @@
 public with sharing class CouponEntity {
     
-    private String code;
+    public String code;
     public Decimal discountPercentage;
-    private Datetime expirationDate;
+    public Datetime expirationDate;
     
     public virtual class CouponEntityException extends Exception {}
 
