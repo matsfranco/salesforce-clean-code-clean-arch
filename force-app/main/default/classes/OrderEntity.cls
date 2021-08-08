@@ -15,9 +15,10 @@ public with sharing class OrderEntity {
         this.orderItems.add(new OrderItemEntity(productCode,quantity));
     }
 
-    public Decimal addCoupon(String couponCode) {
-        this.coupon = new CouponEntity(couponCode);
-         return applyPercentualDiscount(coupon.discountPercentage);
+    public void addCoupon(CouponEntity coupon) {
+        if(!coupon.isExpired()) {
+            this.coupon = coupon;
+        }
     }
 
     public Decimal getTotal() {
