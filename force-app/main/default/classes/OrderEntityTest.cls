@@ -56,35 +56,34 @@ public class OrderEntityTest {
     static void testThreeItemsOrder() {
         String cpf = '864.464.227-84';
         OrderEntity newOrder = new OrderEntity(cpf);
-        newOrder.addItem('100',2);
-        newOrder.addItem('200',2);
-        newOrder.addItem('300',1);
-        System.assertEquals(900.0,newOrder.getTotal(),'Failed to create an order');
+        newOrder.addItem('1',1000,2);
+        newOrder.addItem('2',5000,1);
+        newOrder.addItem('3',30,3);
+        Decimal total = newOrder.getTotal();
+        System.assertEquals(7090.0,total,'Failed to calculate new order total');
     }
 
     @isTest
-    static void testThreeItemsOrderWithCoupon() {
+    static void testAddingValidCoupon() {
         String cpf = '864.464.227-84';
         OrderEntity newOrder = new OrderEntity(cpf);
-        newOrder.addItem('100',2);
-        newOrder.addItem('200',2);
-        newOrder.addItem('300',1);
-        System.assertEquals(450.0,newOrder.addCoupon('TEST_COUPON_50_VALID'),'Failed to create an order');
+        newOrder.addItem('1',1000,2);
+        newOrder.addItem('2',5000,1);
+        newOrder.addItem('3',30,3);
+        newOrder.addCoupon(new CouponEntity('VALE20', 0.2, Date.newInstance(2021,10,10)));
+        Decimal total = newOrder.getTotal();
+        System.assertEquals(5672.0,total,'Failed to calculate new order total considering a valid coupon');
     }
 
     @isTest
-    static void testThreeItemsOrderWithInvaliudCoupon() {
+    static void testAddingExpiredCoupon() {
         String cpf = '864.464.227-84';
         OrderEntity newOrder = new OrderEntity(cpf);
-        newOrder.addItem('100',2);
-        newOrder.addItem('200',2);
-        newOrder.addItem('300',1);
-        try {
-            newOrder.addCoupon('TEST_COUPON_50_INVALID');
-        } catch(Exception e) { 
-            System.assertEquals(true,e.getMessage().contains('Invalid'),'Failed to prevent invalid coupon to be added!');
-        }
+        newOrder.addItem('1',1000,2);
+        newOrder.addItem('2',5000,1);
+        newOrder.addItem('3',30,3);
+        newOrder.addCoupon(new CouponEntity('VALE20', 0.2, Date.newInstance(2020,10,10)));
+        Decimal total = newOrder.getTotal();
+        System.assertEquals(7090.0,total,'Failed to calculate new order total considering a expired coupon');
     }
-
-
 }

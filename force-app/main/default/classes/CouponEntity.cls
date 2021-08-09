@@ -6,7 +6,7 @@ public with sharing class CouponEntity {
     
     public virtual class CouponEntityException extends Exception {}
 
-    public CouponEntity(String code, Decimal percentage, Date expirationDate) {
+    public CouponEntity(String code, Decimal discountPercentage, Date expirationDate) {
         this.code = code;
         this.discountPercentage = discountPercentage;
         this.expirationDate = expirationDate;

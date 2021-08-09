@@ -1,12 +1,13 @@
 public with sharing class Product2Entity {
     
-    String productCode;
-    String description;
-    Decimal price;
-    Decimal width;
-    Decimal height;
-    Decimal length;
-    Decimal weight;    
+    public String productCode;
+    public String description;
+    public Decimal price;
+    public Decimal width;
+    public Decimal height;
+    public Decimal length;
+    public Decimal weight;
+    public Decimal quantity;    
     
     public Product2Entity(String productCode, String description, Decimal price, Decimal width, Decimal height, Decimal length, Decimal weight) {
         this.productCode = productCode;
