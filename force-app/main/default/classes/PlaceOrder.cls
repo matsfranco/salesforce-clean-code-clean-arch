@@ -5,11 +5,12 @@ public with sharing class PlaceOrder {
     public ZipCodeDistanceCalculatorAPIMemory zipCodeDistanceCalculator;
     public Product2Repository productRepository;
     public CouponRepository couponRepository;
+    public OrderRepository orderRepository;
 
-    public PlaceOrder(Product2Repository productRepository,  CouponRepository couponRepository) {
+    public PlaceOrder(Product2Repository productRepository,  CouponRepository couponRepository, OrderRepository orderRepository) {
         this.productRepository = productRepository; 
         this.couponRepository = couponRepository;
-        this.orders = new List<OrderEntity>();
+        this.orderRepository = orderRepository;
         this.zipCodeDistanceCalculator = new ZipCodeDistanceCalculatorAPIMemory();
     }
 
@@ -28,7 +29,7 @@ public with sharing class PlaceOrder {
             if(coupon != null) order.addCoupon(coupon); 
         }
         Decimal total = order.getTotal();
-        this.orders.add(order);
+        this.orderRepository.save(order);
         return new PlaceOrderOutput(order.freightPrice, total);
     }
 
