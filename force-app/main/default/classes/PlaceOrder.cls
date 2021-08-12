@@ -2,16 +2,16 @@ public with sharing class PlaceOrder {
     
     public virtual class PlaceOrderCustomException extends Exception {}
     public List<OrderEntity> orders;
-    public ZipCodeDistanceCalculatorAPIMemory zipCodeDistanceCalculator;
+    public ZipCodeDistanceCalculatorAPI zipCodeDistanceCalculator;
     public Product2Repository productRepository;
     public CouponRepository couponRepository;
     public OrderRepository orderRepository;
 
-    public PlaceOrder(Product2Repository productRepository,  CouponRepository couponRepository, OrderRepository orderRepository) {
+    public PlaceOrder(Product2Repository productRepository,  CouponRepository couponRepository, OrderRepository orderRepository, ZipCodeDistanceCalculatorAPI zipCodeDistanceCalculator) {
         this.productRepository = productRepository; 
         this.couponRepository = couponRepository;
         this.orderRepository = orderRepository;
-        this.zipCodeDistanceCalculator = new ZipCodeDistanceCalculatorAPIMemory();
+        this.zipCodeDistanceCalculator = zipCodeDistanceCalculator;
     }
 
     public PlaceOrderOutput execute(PlaceOrderInput input) {

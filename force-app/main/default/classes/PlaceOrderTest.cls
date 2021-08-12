@@ -17,7 +17,8 @@ public with sharing class PlaceOrderTest {
         Product2Repository productRepository = new Product2RepositoryMemory();
         CouponRepository couponRepository = new CouponRepositoryMemory();
         OrderRepository orderRepository = new OrderRepositoryMemory();
-        PlaceOrder placeOrder = new PlaceOrder(productRepository,couponRepository,orderRepository);
+        ZipCodeDistanceCalculatorAPI zipCodeCalculator = new ZipCodeDistanceCalculatorAPIMemory();
+        PlaceOrder placeOrder = new PlaceOrder(productRepository,couponRepository,orderRepository,zipCodeCalculator);
         PlaceOrderOutput output = placeOrder.execute(input);
         System.assertEquals(5982.0,output.total,'Failed to validate a common place order.');
     }
@@ -39,7 +40,8 @@ public with sharing class PlaceOrderTest {
         Product2Repository productRepository = new Product2RepositoryMemory();
         CouponRepository couponRepository = new CouponRepositoryMemory();
         OrderRepository orderRepository = new OrderRepositoryMemory();
-        PlaceOrder placeOrder = new PlaceOrder(productRepository,couponRepository,orderRepository);
+        ZipCodeDistanceCalculatorAPI zipCodeCalculator = new ZipCodeDistanceCalculatorAPIMemory();
+        PlaceOrder placeOrder = new PlaceOrder(productRepository,couponRepository,orderRepository,zipCodeCalculator);
         PlaceOrderOutput output = placeOrder.execute(input);
         System.assertEquals(7400.0,output.total,'Failed to validate a common place order.');
     }
@@ -61,7 +63,8 @@ public with sharing class PlaceOrderTest {
         Product2Repository productRepository = new Product2RepositoryMemory();
         CouponRepository couponRepository = new CouponRepositoryMemory();
         OrderRepository orderRepository = new OrderRepositoryMemory();
-        PlaceOrder placeOrder = new PlaceOrder(productRepository,couponRepository,orderRepository);
+        ZipCodeDistanceCalculatorAPI zipCodeCalculator = new ZipCodeDistanceCalculatorAPIMemory();
+        PlaceOrder placeOrder = new PlaceOrder(productRepository,couponRepository,orderRepository,zipCodeCalculator);
         PlaceOrderOutput output = placeOrder.execute(input);
         System.assertEquals(310.0,output.freightPrice,'Failed to validate a common place order.');
     }
