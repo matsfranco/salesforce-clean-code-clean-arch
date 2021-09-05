@@ -9,4 +9,8 @@ public with sharing class OrderRepositoryMemory implements OrderRepository {
     public void save(OrderEntity newOrder) {
         this.orders.add(newOrder);
     }
+
+    public Integer count() {
+        return this.orders.size();
+    }
 }

@@ -45,7 +45,8 @@ public with sharing class PlaceOrderTest {
                 '{ "productCode": "1", "quantity": 2.0},'+    
                 '{ "productCode": "2", "quantity": 1.0},'+    
                 '{ "productCode": "3", "quantity": 3.0}'+     
-            '],'+                              
+            '],'+    
+            '"issueDate": "2021-01-01T00:00:00.000Z",'+                           
             '"couponCode": "VALE20"'+                
         '}';
         PlaceOrderInput input = (PlaceOrderInput) JSON.deserialize(inputJSON,PlaceOrderInput.class);   
@@ -68,7 +69,8 @@ public with sharing class PlaceOrderTest {
                 '{ "productCode": "1", "quantity": 2.0},'+    
                 '{ "productCode": "2", "quantity": 1.0},'+    
                 '{ "productCode": "3", "quantity": 3.0}'+     
-            '],'+                              
+            '],'+    
+            '"issueDate": "2021-01-01T00:00:00.000Z",'+                             
             '"couponCode": "VALE20_EXPIRED"'+                
         '}';
         PlaceOrderInput input = (PlaceOrderInput) JSON.deserialize(inputJSON,PlaceOrderInput.class);   
@@ -91,7 +93,8 @@ public with sharing class PlaceOrderTest {
                 '{ "productCode": "1", "quantity": 2.0},'+    
                 '{ "productCode": "2", "quantity": 1.0},'+    
                 '{ "productCode": "3", "quantity": 3.0}'+     
-            '],'+                              
+            '],'+   
+            '"issueDate": "2021-01-01T00:00:00.000Z",'+                              
             '"couponCode": "VALE20_EXPIRED"'+                
         '}';
         PlaceOrderInput input = (PlaceOrderInput) JSON.deserialize(inputJSON,PlaceOrderInput.class);   
@@ -102,5 +105,31 @@ public with sharing class PlaceOrderTest {
         PlaceOrder placeOrder = new PlaceOrder(productRepository,couponRepository,orderRepository,zipCodeCalculator);
         PlaceOrderOutput output = placeOrder.execute(input);
         System.assertEquals(310.0,output.freightPrice,'Failed to validate a common place order.');
+    }
+
+    @isTest
+    static void validateOrderNumber() {
+        String inputJSON = 
+        '{'+                                  
+            '"cpf": "778.278.412-36",'+         
+            '"zipcode": "11.111-11",'+           
+            '"items": ['+                        
+                '{ "productCode": "1", "quantity": 2.0},'+    
+                '{ "productCode": "2", "quantity": 1.0},'+    
+                '{ "productCode": "3", "quantity": 3.0}'+     
+            '],'+   
+            '"issueDate": "2021-10-10T00:00:00.000Z",'+                              
+            '"couponCode": "VALE20"'+                
+        '}';
+        PlaceOrderInput input = (PlaceOrderInput) JSON.deserialize(inputJSON,PlaceOrderInput.class);   
+        Product2Repository productRepository = new Product2RepositoryDatabase(new InfraDatabaseSFDC());
+        CouponRepository couponRepository = new CouponRepositoryMemory();
+        OrderRepository orderRepository = new OrderRepositoryMemory();
+        ZipCodeDistanceCalculatorAPI zipCodeCalculator = new ZipCodeDistanceCalculatorAPIMemory();
+        PlaceOrder placeOrder = new PlaceOrder(productRepository,couponRepository,orderRepository,zipCodeCalculator);
+        PlaceOrderOutput output1 = placeOrder.execute(input);
+        System.assertEquals('202100000001',output1.orderNumber,'Failed to generate the Order Number');  
+        PlaceOrderOutput output2 = placeOrder.execute(input);
+        System.assertEquals('202100000002',output2.orderNumber,'Failed to generate the Order Number'); 
     }
 }

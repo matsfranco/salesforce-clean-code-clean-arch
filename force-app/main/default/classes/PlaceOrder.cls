@@ -15,7 +15,8 @@ public with sharing class PlaceOrder {
     }
 
     public PlaceOrderOutput execute(PlaceOrderInput input) {
-        OrderEntity order = new OrderEntity(input.cpf);
+        Integer sequence = this.orderRepository.count() + 1;
+        OrderEntity order = new OrderEntity(input.cpf, input.issueDate, sequence);
         Decimal distance = this.zipCodeDistanceCalculator.calculate(input.zipcode, '99.999-999');
 
         for(Item item : input.items) {
@@ -30,7 +31,7 @@ public with sharing class PlaceOrder {
         }
         Decimal total = order.getTotal();
         this.orderRepository.save(order);
-        return new PlaceOrderOutput(order.freightPrice, total);
+        return new PlaceOrderOutput(order.orderNumber.value, order.freightPrice, total);
     }
 
  

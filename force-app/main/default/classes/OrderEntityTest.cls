@@ -46,7 +46,7 @@ public class OrderEntityTest {
     static void testInvalidCPF() {
         String cpf = '111.111.111-11';
         try {
-            OrderEntity newOrder = new OrderEntity(cpf);
+            OrderEntity newOrder = new OrderEntity(cpf,Datetime.newInstance(2021,1,1),1);
         } catch(Exception e) { 
             System.assertEquals(true,e.getMessage().contains('Invalid CPF'),'Failed to validate order creation with invalid cpf.');
         }
@@ -55,7 +55,7 @@ public class OrderEntityTest {
     @isTest
     static void testThreeItemsOrder() {
         String cpf = '864.464.227-84';
-        OrderEntity newOrder = new OrderEntity(cpf);
+        OrderEntity newOrder = new OrderEntity(cpf,Datetime.newInstance(2021,1,1),1);
         newOrder.addItem('1',1000,2);
         newOrder.addItem('2',5000,1);
         newOrder.addItem('3',30,3);
@@ -66,7 +66,7 @@ public class OrderEntityTest {
     @isTest
     static void testAddingValidCoupon() {
         String cpf = '864.464.227-84';
-        OrderEntity newOrder = new OrderEntity(cpf);
+        OrderEntity newOrder = new OrderEntity(cpf,Datetime.newInstance(2021,1,1),1);
         newOrder.addItem('1',1000,2);
         newOrder.addItem('2',5000,1);
         newOrder.addItem('3',30,3);
@@ -78,12 +78,25 @@ public class OrderEntityTest {
     @isTest
     static void testAddingExpiredCoupon() {
         String cpf = '864.464.227-84';
-        OrderEntity newOrder = new OrderEntity(cpf);
+        OrderEntity newOrder = new OrderEntity(cpf,Datetime.newInstance(2021,1,1),1);
         newOrder.addItem('1',1000,2);
         newOrder.addItem('2',5000,1);
         newOrder.addItem('3',30,3);
-        newOrder.addCoupon(new CouponEntity('VALE20', 0.2, Date.newInstance(2020,10,10)));
+        newOrder.addCoupon(new CouponEntity('VALE20_EXPIRED', 0.2, Date.newInstance(2020,10,10)));
         Decimal total = newOrder.getTotal();
         System.assertEquals(7090.0,total,'Failed to calculate new order total considering a expired coupon');
     }
+ 
+    @isTest
+    static void validateOrderNumber() {
+        String cpf = '864.464.227-84';
+        OrderEntity newOrder = new OrderEntity(cpf,Datetime.newInstance(2021,1,1),202);
+        newOrder.addItem('1',1000,2);
+        newOrder.addItem('2',5000,1);
+        newOrder.addItem('3',30,3);
+        Decimal total = newOrder.getTotal();
+        System.assertEquals('202100000202',newOrder.orderNumber.value,'Failed to generate the Order Number');
+
+    }
+
 }

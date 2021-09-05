@@ -2,15 +2,21 @@ public with sharing class OrderEntity {
 
     public virtual class OrderEntityException extends Exception {}
 
+    public OrderNumber orderNumber;
+    private Datetime issueDate;
+    private Integer sequence;
     private CPF cpf;
     private List<OrderItemEntity> orderItems;
     private CouponEntity coupon;
     public Decimal freightPrice;
 
-    public OrderEntity(String cpf) {
+    public OrderEntity(String cpf, Datetime issueDate, Integer sequence) {
         this.cpf = new CPF(cpf);
         this.orderItems = new List<OrderItemEntity>();
         this.freightPrice = 0;
+        this.issueDate = issueDate;
+        this.sequence = sequence; 
+        this.orderNumber = new OrderNumber(issueDate,sequence);
     }
 
     public void addItem(String productCode, Decimal price, Decimal quantity) {
