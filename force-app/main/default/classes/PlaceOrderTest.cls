@@ -3,6 +3,16 @@ public with sharing class PlaceOrderTest {
 
     @TestSetup
     static void makeData(){
+
+        List<Account> accounts = new List<Account>();
+        Account newAccount1 = new Account(Name = 'Test 1');
+        accounts.add(newAccount1);
+        Account newAccount2 = new Account(Name = 'Test 2');
+        accounts.add(newAccount2);
+        Account newAccount3 = new Account(Name = 'Test 3');
+        accounts.add(newAccount3);
+        Database.insert(accounts);
+
         List<Product2> products = new List<Product2>();
         Product2 product1 = new Product2(   Name = 'Guitarra',
                                             Description = 'Guitarra',
@@ -32,8 +42,32 @@ public with sharing class PlaceOrderTest {
                                             Weight__c = 1.0);
         products.add(product3);
         database.insert(products);
-    }
 
+        Pricebook2 standardPricebook = new Pricebook2(
+            Id = Test.getStandardPricebookId(),
+            IsActive = true
+        );
+        database.update(standardPricebook);
+
+        List<PricebookEntry> pricebookEntries = new List<PricebookEntry>();
+        for(Product2 product : products) {
+            PricebookEntry newPricebookEntry = new PricebookEntry();
+            newPricebookEntry.Product2Id = product.Id;
+            newPricebookEntry.Pricebook2Id = standardPricebook.Id;
+            newPricebookEntry.UnitPrice = product.Price__c;
+            newPricebookEntry.IsActive = true;
+            pricebookEntries.add(newPricebookEntry);
+        }
+        database.insert(pricebookEntries);
+
+        List<Coupon__c> coupons = new List<Coupon__c>();
+        Coupon__c coupon1 = new Coupon__c(Name = 'VALE20', DiscountPercentage__c = 0.2, ExpirationDate__c = Datetime.newInstance(2021,10,10));
+        coupons.add(coupon1);
+        Coupon__c coupon2 = new Coupon__c(Name = 'VALE20_EXPIRED', DiscountPercentage__c = 0.2, ExpirationDate__c = Datetime.newInstance(2020,10,10));
+        coupons.add(coupon2);
+        database.insert(coupons);
+
+    }
 
     @isTest
     static void validatePlaceCommonOrder() {
@@ -50,9 +84,9 @@ public with sharing class PlaceOrderTest {
             '"couponCode": "VALE20"'+                
         '}';
         PlaceOrderInput input = (PlaceOrderInput) JSON.deserialize(inputJSON,PlaceOrderInput.class);   
-        Product2Repository productRepository = new Product2RepositoryMemory();
-        CouponRepository couponRepository = new CouponRepositoryMemory();
-        OrderRepository orderRepository = new OrderRepositoryMemory();
+        Product2Repository productRepository = new Product2RepositoryDatabase(new InfraDatabaseSFDC());
+        CouponRepository couponRepository = new CouponRepositoryDatabase(new InfraDatabaseSFDC());
+        OrderRepository orderRepository = new OrderRepositoryDatabase(new InfraDatabaseSFDC());
         ZipCodeDistanceCalculatorAPI zipCodeCalculator = new ZipCodeDistanceCalculatorAPIMemory();
         PlaceOrder placeOrder = new PlaceOrder(productRepository,couponRepository,orderRepository,zipCodeCalculator);
         PlaceOrderOutput output = placeOrder.execute(input);
@@ -74,9 +108,9 @@ public with sharing class PlaceOrderTest {
             '"couponCode": "VALE20_EXPIRED"'+                
         '}';
         PlaceOrderInput input = (PlaceOrderInput) JSON.deserialize(inputJSON,PlaceOrderInput.class);   
-        Product2Repository productRepository = new Product2RepositoryMemory();
-        CouponRepository couponRepository = new CouponRepositoryMemory();
-        OrderRepository orderRepository = new OrderRepositoryMemory();
+        Product2Repository productRepository = new Product2RepositoryDatabase(new InfraDatabaseSFDC());
+        CouponRepository couponRepository = new CouponRepositoryDatabase(new InfraDatabaseSFDC());
+        OrderRepository orderRepository = new OrderRepositoryDatabase(new InfraDatabaseSFDC());
         ZipCodeDistanceCalculatorAPI zipCodeCalculator = new ZipCodeDistanceCalculatorAPIMemory();
         PlaceOrder placeOrder = new PlaceOrder(productRepository,couponRepository,orderRepository,zipCodeCalculator);
         PlaceOrderOutput output = placeOrder.execute(input);
@@ -99,8 +133,8 @@ public with sharing class PlaceOrderTest {
         '}';
         PlaceOrderInput input = (PlaceOrderInput) JSON.deserialize(inputJSON,PlaceOrderInput.class);   
         Product2Repository productRepository = new Product2RepositoryDatabase(new InfraDatabaseSFDC());
-        CouponRepository couponRepository = new CouponRepositoryMemory();
-        OrderRepository orderRepository = new OrderRepositoryMemory();
+        CouponRepository couponRepository = new CouponRepositoryDatabase(new InfraDatabaseSFDC());
+        OrderRepository orderRepository = new OrderRepositoryDatabase(new InfraDatabaseSFDC());
         ZipCodeDistanceCalculatorAPI zipCodeCalculator = new ZipCodeDistanceCalculatorAPIMemory();
         PlaceOrder placeOrder = new PlaceOrder(productRepository,couponRepository,orderRepository,zipCodeCalculator);
         PlaceOrderOutput output = placeOrder.execute(input);
@@ -123,8 +157,8 @@ public with sharing class PlaceOrderTest {
         '}';
         PlaceOrderInput input = (PlaceOrderInput) JSON.deserialize(inputJSON,PlaceOrderInput.class);   
         Product2Repository productRepository = new Product2RepositoryDatabase(new InfraDatabaseSFDC());
-        CouponRepository couponRepository = new CouponRepositoryMemory();
-        OrderRepository orderRepository = new OrderRepositoryMemory();
+        CouponRepository couponRepository = new CouponRepositoryDatabase(new InfraDatabaseSFDC());
+        OrderRepository orderRepository = new OrderRepositoryDatabase(new InfraDatabaseSFDC());
         ZipCodeDistanceCalculatorAPI zipCodeCalculator = new ZipCodeDistanceCalculatorAPIMemory();
         PlaceOrder placeOrder = new PlaceOrder(productRepository,couponRepository,orderRepository,zipCodeCalculator);
         PlaceOrderOutput output1 = placeOrder.execute(input);

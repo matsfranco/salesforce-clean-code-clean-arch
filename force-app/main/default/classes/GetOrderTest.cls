@@ -39,6 +39,7 @@ public class GetOrderTest {
         Coupon__c coupon2 = new Coupon__c(Name = 'VALE20_EXPIRED', DiscountPercentage__c = 20, ExpirationDate__c = Datetime.newInstance(2020,10,10));
         coupons.add(coupon2);
         database.insert(coupons);
+
     }
 
     @isTest

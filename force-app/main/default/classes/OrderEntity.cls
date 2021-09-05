@@ -3,11 +3,11 @@ public with sharing class OrderEntity {
     public virtual class OrderEntityException extends Exception {}
 
     public OrderNumber orderNumber;
-    private Datetime issueDate;
-    private Integer sequence;
-    private CPF cpf;
+    public Datetime issueDate;
+    public Integer sequence;
+    public CPF cpf;
     public List<OrderItemEntity> orderItems;
-    private CouponEntity coupon;
+    public CouponEntity coupon;
     public Decimal freightPrice;
 
     public OrderEntity(String cpf, Datetime issueDate, Integer sequence) {
