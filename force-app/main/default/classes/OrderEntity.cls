@@ -6,7 +6,7 @@ public with sharing class OrderEntity {
     private Datetime issueDate;
     private Integer sequence;
     private CPF cpf;
-    private List<OrderItemEntity> orderItems;
+    public List<OrderItemEntity> orderItems;
     private CouponEntity coupon;
     public Decimal freightPrice;
 
