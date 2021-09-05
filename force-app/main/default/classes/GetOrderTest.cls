@@ -3,8 +3,17 @@ public class GetOrderTest {
     
     @TestSetup
     static void makeData(){
+
+        List<Account> accounts = new List<Account>();
+        Account newAccount1 = new Account(Name = 'Test 1');
+        accounts.add(newAccount1);
+        Account newAccount2 = new Account(Name = 'Test 2');
+        accounts.add(newAccount2);
+        Account newAccount3 = new Account(Name = 'Test 3');
+        accounts.add(newAccount3);
+        Database.insert(accounts);
+
         List<Product2> products = new List<Product2>();
-        List<Coupon__c> coupons = new List<Coupon__c>();
         Product2 product1 = new Product2(   Name = 'Guitarra',
                                             Description = 'Guitarra',
                                             ProductCode = '1',
@@ -34,9 +43,27 @@ public class GetOrderTest {
         products.add(product3);
         database.insert(products);
 
-        Coupon__c coupon1 = new Coupon__c(Name = 'VALE20', DiscountPercentage__c = 20, ExpirationDate__c = Datetime.newInstance(2021,10,10));
+        Pricebook2 standardPricebook = new Pricebook2(
+            Id = Test.getStandardPricebookId(),
+            IsActive = true
+        );
+        database.update(standardPricebook);
+
+        List<PricebookEntry> pricebookEntries = new List<PricebookEntry>();
+        for(Product2 product : products) {
+            PricebookEntry newPricebookEntry = new PricebookEntry();
+            newPricebookEntry.Product2Id = product.Id;
+            newPricebookEntry.Pricebook2Id = standardPricebook.Id;
+            newPricebookEntry.UnitPrice = product.Price__c;
+            newPricebookEntry.IsActive = true;
+            pricebookEntries.add(newPricebookEntry);
+        }
+        database.insert(pricebookEntries);
+
+        List<Coupon__c> coupons = new List<Coupon__c>();
+        Coupon__c coupon1 = new Coupon__c(Name = 'VALE20', DiscountPercentage__c = 0.2, ExpirationDate__c = Datetime.newInstance(2021,10,10));
         coupons.add(coupon1);
-        Coupon__c coupon2 = new Coupon__c(Name = 'VALE20_EXPIRED', DiscountPercentage__c = 20, ExpirationDate__c = Datetime.newInstance(2020,10,10));
+        Coupon__c coupon2 = new Coupon__c(Name = 'VALE20_EXPIRED', DiscountPercentage__c = 0.2, ExpirationDate__c = Datetime.newInstance(2020,10,10));
         coupons.add(coupon2);
         database.insert(coupons);
 
@@ -56,14 +83,13 @@ public class GetOrderTest {
             '"issueDate": "2021-10-10T00:00:00.000Z",'+                              
             '"couponCode": "VALE20_EXPIRED"'+                
         '}';
+
+        RepositoryFactory repositoryFactory = new DatabaseRepositoryFactory();
         PlaceOrderInput input = (PlaceOrderInput) JSON.deserialize(inputJSON,PlaceOrderInput.class);   
-        Product2Repository productRepository = new Product2RepositoryDatabase(new InfraDatabaseSFDC());
-        CouponRepository couponRepository = new CouponRepositoryMemory();
-        OrderRepository orderRepository = new OrderRepositoryMemory();
         ZipCodeDistanceCalculatorAPI zipCodeCalculator = new ZipCodeDistanceCalculatorAPIMemory();
-        PlaceOrder placeOrder = new PlaceOrder(productRepository,couponRepository,orderRepository,zipCodeCalculator);
+        PlaceOrder placeOrder = new PlaceOrder(repositoryFactory,zipCodeCalculator);
         PlaceOrderOutput output = placeOrder.execute(input);
-        GetOrder getOrder = new GetOrder(productRepository,couponRepository,orderRepository);
+        GetOrder getOrder = new GetOrder(repositoryFactory);
         GetOrderOutput order = getOrder.execute(output.orderNumber);
         System.assertEquals('202100000001', order.orderNumber,'Failed to get Order by Order Number');
         System.assertEquals(3, order.orderItems.size(),'Failed to get Order Items by Order Number');
@@ -83,14 +109,14 @@ public class GetOrderTest {
             '"issueDate": "2021-10-10T00:00:00.000Z",'+                              
             '"couponCode": "VALE20_EXPIRED"'+                
         '}';
+
+        RepositoryFactory repositoryFactory = new DatabaseRepositoryFactory();
+
         PlaceOrderInput input = (PlaceOrderInput) JSON.deserialize(inputJSON,PlaceOrderInput.class);   
-        Product2Repository productRepository = new Product2RepositoryDatabase(new InfraDatabaseSFDC());
-        CouponRepository couponRepository = new CouponRepositoryDatabase(new InfraDatabaseSFDC());
-        OrderRepository orderRepository = new OrderRepositoryMemory();
         ZipCodeDistanceCalculatorAPI zipCodeCalculator = new ZipCodeDistanceCalculatorAPIMemory();
-        PlaceOrder placeOrder = new PlaceOrder(productRepository,couponRepository,orderRepository,zipCodeCalculator);
+        PlaceOrder placeOrder = new PlaceOrder(repositoryFactory,zipCodeCalculator);
         PlaceOrderOutput output = placeOrder.execute(input);
-        GetOrder getOrder = new GetOrder(productRepository,couponRepository,orderRepository);
+        GetOrder getOrder = new GetOrder(repositoryFactory);
          try {
             GetOrderOutput order = getOrder.execute('202100000002');
         } catch (Exception e) {

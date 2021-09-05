@@ -7,10 +7,10 @@ public with sharing class PlaceOrder {
     public CouponRepository couponRepository;
     public OrderRepository orderRepository;
 
-    public PlaceOrder(Product2Repository productRepository,  CouponRepository couponRepository, OrderRepository orderRepository, ZipCodeDistanceCalculatorAPI zipCodeDistanceCalculator) {
-        this.productRepository = productRepository; 
-        this.couponRepository = couponRepository;
-        this.orderRepository = orderRepository;
+    public PlaceOrder(RepositoryFactory repositoryFactory, ZipCodeDistanceCalculatorAPI zipCodeDistanceCalculator) {
+        this.productRepository = repositoryFactory.createProductRepository(); 
+        this.couponRepository = repositoryFactory.createCouponRepository();
+        this.orderRepository = repositoryFactory.createOrderRepository();
         this.zipCodeDistanceCalculator = zipCodeDistanceCalculator;
     }
 

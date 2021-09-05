@@ -7,10 +7,10 @@ public with sharing class GetOrder {
     public CouponRepository couponRepository;
     public OrderRepository orderRepository;
 
-    public GetOrder(Product2Repository productRepository,  CouponRepository couponRepository, OrderRepository orderRepository) {
-        this.productRepository = productRepository; 
-        this.couponRepository = couponRepository;
-        this.orderRepository = orderRepository;
+    public GetOrder(RepositoryFactory repositotyFactory) {
+        this.productRepository = repositotyFactory.createProductRepository(); 
+        this.couponRepository = repositotyFactory.createCouponRepository();
+        this.orderRepository = repositotyFactory.createOrderRepository();
     }
 
     public GetOrderOutput execute(String orderNumber) {

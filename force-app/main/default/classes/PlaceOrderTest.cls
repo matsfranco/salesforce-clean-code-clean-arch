@@ -83,12 +83,10 @@ public with sharing class PlaceOrderTest {
             '"issueDate": "2021-01-01T00:00:00.000Z",'+                           
             '"couponCode": "VALE20"'+                
         '}';
+        RepositoryFactory repositoryFactory = new DatabaseRepositoryFactory();
         PlaceOrderInput input = (PlaceOrderInput) JSON.deserialize(inputJSON,PlaceOrderInput.class);   
-        Product2Repository productRepository = new Product2RepositoryDatabase(new InfraDatabaseSFDC());
-        CouponRepository couponRepository = new CouponRepositoryDatabase(new InfraDatabaseSFDC());
-        OrderRepository orderRepository = new OrderRepositoryDatabase(new InfraDatabaseSFDC());
         ZipCodeDistanceCalculatorAPI zipCodeCalculator = new ZipCodeDistanceCalculatorAPIMemory();
-        PlaceOrder placeOrder = new PlaceOrder(productRepository,couponRepository,orderRepository,zipCodeCalculator);
+        PlaceOrder placeOrder = new PlaceOrder(repositoryFactory,zipCodeCalculator);
         PlaceOrderOutput output = placeOrder.execute(input);
         System.assertEquals(5982.0,output.total,'Failed to validate a common place order.');
     }
@@ -107,12 +105,10 @@ public with sharing class PlaceOrderTest {
             '"issueDate": "2021-01-01T00:00:00.000Z",'+                             
             '"couponCode": "VALE20_EXPIRED"'+                
         '}';
+        RepositoryFactory repositoryFactory = new DatabaseRepositoryFactory();
         PlaceOrderInput input = (PlaceOrderInput) JSON.deserialize(inputJSON,PlaceOrderInput.class);   
-        Product2Repository productRepository = new Product2RepositoryDatabase(new InfraDatabaseSFDC());
-        CouponRepository couponRepository = new CouponRepositoryDatabase(new InfraDatabaseSFDC());
-        OrderRepository orderRepository = new OrderRepositoryDatabase(new InfraDatabaseSFDC());
         ZipCodeDistanceCalculatorAPI zipCodeCalculator = new ZipCodeDistanceCalculatorAPIMemory();
-        PlaceOrder placeOrder = new PlaceOrder(productRepository,couponRepository,orderRepository,zipCodeCalculator);
+        PlaceOrder placeOrder = new PlaceOrder(repositoryFactory,zipCodeCalculator);
         PlaceOrderOutput output = placeOrder.execute(input);
         System.assertEquals(7400.0,output.total,'Failed to validate a common place order.');
     }
@@ -131,12 +127,13 @@ public with sharing class PlaceOrderTest {
             '"issueDate": "2021-01-01T00:00:00.000Z",'+                              
             '"couponCode": "VALE20_EXPIRED"'+                
         '}';
+        RepositoryFactory repositoryFactory = new DatabaseRepositoryFactory();
         PlaceOrderInput input = (PlaceOrderInput) JSON.deserialize(inputJSON,PlaceOrderInput.class);   
         Product2Repository productRepository = new Product2RepositoryDatabase(new InfraDatabaseSFDC());
         CouponRepository couponRepository = new CouponRepositoryDatabase(new InfraDatabaseSFDC());
         OrderRepository orderRepository = new OrderRepositoryDatabase(new InfraDatabaseSFDC());
         ZipCodeDistanceCalculatorAPI zipCodeCalculator = new ZipCodeDistanceCalculatorAPIMemory();
-        PlaceOrder placeOrder = new PlaceOrder(productRepository,couponRepository,orderRepository,zipCodeCalculator);
+        PlaceOrder placeOrder = new PlaceOrder(repositoryFactory,zipCodeCalculator);
         PlaceOrderOutput output = placeOrder.execute(input);
         System.assertEquals(310.0,output.freightPrice,'Failed to validate a common place order.');
     }
@@ -155,12 +152,10 @@ public with sharing class PlaceOrderTest {
             '"issueDate": "2021-10-10T00:00:00.000Z",'+                              
             '"couponCode": "VALE20"'+                
         '}';
-        PlaceOrderInput input = (PlaceOrderInput) JSON.deserialize(inputJSON,PlaceOrderInput.class);   
-        Product2Repository productRepository = new Product2RepositoryDatabase(new InfraDatabaseSFDC());
-        CouponRepository couponRepository = new CouponRepositoryDatabase(new InfraDatabaseSFDC());
-        OrderRepository orderRepository = new OrderRepositoryDatabase(new InfraDatabaseSFDC());
+        RepositoryFactory repositoryFactory = new DatabaseRepositoryFactory();
+        PlaceOrderInput input = (PlaceOrderInput) JSON.deserialize(inputJSON,PlaceOrderInput.class);
         ZipCodeDistanceCalculatorAPI zipCodeCalculator = new ZipCodeDistanceCalculatorAPIMemory();
-        PlaceOrder placeOrder = new PlaceOrder(productRepository,couponRepository,orderRepository,zipCodeCalculator);
+        PlaceOrder placeOrder = new PlaceOrder(repositoryFactory,zipCodeCalculator);
         PlaceOrderOutput output1 = placeOrder.execute(input);
         System.assertEquals('202100000001',output1.orderNumber,'Failed to generate the Order Number');  
         PlaceOrderOutput output2 = placeOrder.execute(input);
