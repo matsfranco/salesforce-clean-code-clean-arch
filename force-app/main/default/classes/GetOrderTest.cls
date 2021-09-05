@@ -4,6 +4,7 @@ public class GetOrderTest {
     @TestSetup
     static void makeData(){
         List<Product2> products = new List<Product2>();
+        List<Coupon__c> coupons = new List<Coupon__c>();
         Product2 product1 = new Product2(   Name = 'Guitarra',
                                             Description = 'Guitarra',
                                             ProductCode = '1',
@@ -32,6 +33,12 @@ public class GetOrderTest {
                                             Weight__c = 1.0);
         products.add(product3);
         database.insert(products);
+
+        Coupon__c coupon1 = new Coupon__c(Name = 'VALE20', DiscountPercentage__c = 20, ExpirationDate__c = Datetime.newInstance(2021,10,10));
+        coupons.add(coupon1);
+        Coupon__c coupon2 = new Coupon__c(Name = 'VALE20_EXPIRED', DiscountPercentage__c = 20, ExpirationDate__c = Datetime.newInstance(2020,10,10));
+        coupons.add(coupon2);
+        database.insert(coupons);
     }
 
     @isTest
@@ -77,13 +84,13 @@ public class GetOrderTest {
         '}';
         PlaceOrderInput input = (PlaceOrderInput) JSON.deserialize(inputJSON,PlaceOrderInput.class);   
         Product2Repository productRepository = new Product2RepositoryDatabase(new InfraDatabaseSFDC());
-        CouponRepository couponRepository = new CouponRepositoryMemory();
+        CouponRepository couponRepository = new CouponRepositoryDatabase(new InfraDatabaseSFDC());
         OrderRepository orderRepository = new OrderRepositoryMemory();
         ZipCodeDistanceCalculatorAPI zipCodeCalculator = new ZipCodeDistanceCalculatorAPIMemory();
         PlaceOrder placeOrder = new PlaceOrder(productRepository,couponRepository,orderRepository,zipCodeCalculator);
         PlaceOrderOutput output = placeOrder.execute(input);
         GetOrder getOrder = new GetOrder(productRepository,couponRepository,orderRepository);
-        try {
+         try {
             GetOrderOutput order = getOrder.execute('202100000002');
         } catch (Exception e) {
             System.assertEquals(true,e.getMessage().contains('Order not found'),'Failed to return not fount exception');

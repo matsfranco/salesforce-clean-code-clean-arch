@@ -1,3 +1,3 @@
 public interface CouponRepository {
-    CouponEntity getByCouponCode(String code);
+    CouponEntity getByCouponCode(String couponCode);
 }
